@@ -1,0 +1,22 @@
+---
+:pools:
+  :main:
+  - 1.2.3.4
+  - 1.2.3.5
+  - 1.2.3.6
+  :user:
+  - 1.2.3.7
+  - 1.2.3.8
+  - 1.2.3.9
+:stats:
+- :uptime
+- :curr_items
+- :total_items
+- :bytes
+- :curr_connections
+- :total_connections
+- :cmd_get
+- :cmd_set
+- :get_hits
+- :get_misses
+- :evictions

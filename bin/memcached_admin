@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+$:.unshift File.join File.dirname(__FILE__), *%w[.. lib]
+%w[yaml thor terminal-table memcached_admin].each {|l| require l}
+
+class Console < Thor
+  attr_reader :config, :admin
+
+  def initialize *args
+    super
+
+    unless File.exists? File.expand_path '~/.memcached_admin.yml'
+      abort 'please add a config @ ~/.memcached_admin.yml'
+    end
+  
+    @config = YAML.load_file File.expand_path '~/.memcached_admin.yml'
+    @admin  = MemcachedAdmin.new @config
+  end
+
+  desc 'stats', 'memcached stats'
+  def stats
+    admin.stats.each do |pool, nodes|
+      memcached_stats = Terminal::Table.new :title    => "memcached stats for pool: #{pool}",
+                                            :headings => [:host, config[:stats]].flatten
+
+      nodes.each do |node, stats|
+        memcached_stats << [node, stats.keep_if {|k, v| config[:stats].include? k}.values].flatten
+      end
+
+      puts memcached_stats
+    end
+  end
+end
+
+Console.start
